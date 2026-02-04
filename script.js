@@ -9,7 +9,45 @@ document.addEventListener("DOMContentLoaded", function () {
     { x: 160, y: 200 },
     { x: 140, y: 200 },
     { x: 120, y: 200 },
-  ];
+  ]; // [head, head, tail]
+
+  let dx = cellSize;
+  let dy = 0;
+
+  function updateSnake() {
+    const newHead = { x: snake[0].x + dx, y: snake[0].y + dy };
+    snake.unshift(newHead); // adding new head of the snake
+
+    // check if collison
+    if (newHead.x === food.x && newHead.y === food.y) {
+      score += 10;
+    } else {
+      snake.pop(); // remove head
+    }
+  }
+
+  function changeDirection(event) {
+    console.log("Key Pressed", event);
+
+    const isGoingUp = dy === -cellSize;
+    const isGoingDown = dy === cellSize;
+    const isGoingRight = dx === cellSize;
+    const isGoingLeft = dx === -cellSize;
+
+    if (event.key === "ArrowUp" && dy === -cellSize && !isGoingDown) {
+      dx = 0;
+      dy = -cellSize;
+    } else if ((event.key = "ArrowDown" && dy === cellSize && !isGoingUp)) {
+      dx = 0;
+      dy = cellSize;
+    } else if ((event.key = "ArrowLeft" && dx === -cellSize && !isGoingRight)) {
+      dx = -cellSize;
+      dy = 0;
+    } else if ((event.key = "ArrowRight" && dx === cellSize && !isGoingLeft)) {
+      dx = cellSize;
+      dy = 0;
+    }
+  }
 
   function drawDiv(x, y, className) {
     const divElement = document.createElement("div");
@@ -33,12 +71,18 @@ document.addEventListener("DOMContentLoaded", function () {
     gameArena.appendChild(foodElement);
   }
 
+  function gameLoop() {
+    setInterval(() => {
+      updateSnake();
+      drawFoodAndSnake();
+    }, 200);
+  }
+
   function runGame() {
     if (!gameStarted) {
       gameStarted = true;
-      // gameLoop();
-
-      drawFoodAndSnake();
+      gameLoop();
+      document.addEventListener("keydown", changeDirection);
     }
   }
 
